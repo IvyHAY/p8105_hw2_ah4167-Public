@@ -33,7 +33,17 @@ pols_month_df=
     "10"~"Oct",
     "11"~"Nov",
     "12"~"Dec")
-  )
+  )|>
+  mutate(
+    president=case_match(
+      prez_gop,
+    0~"dem",
+    1~"gop"
+    )
+  )|>
+  select(-starts_with("prez_"))
+  
+  
 ```
 
 
