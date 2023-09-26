@@ -16,7 +16,7 @@ pols_month_df=
   read.csv("./data/fivethirtyeight_datasets/pols-month.csv")|>
   separate(
            col="mon",
-           into=c("year","month","day"),
+           into=c("month","month","day"),
            sep="-")|>
   mutate(
     month=case_match(
@@ -48,13 +48,29 @@ pols_month_df=
 Second, clean the data in snp.csv using a similar process to the above. For consistency across datasets, arrange according to year and month, and organize so that year and month are the leading columns.
 
 ```{r}
-snp_df=
+snp_df_1=
   read.csv("./data/fivethirtyeight_datasets/snp.csv")|>
+  head(175)|>
   separate(
            col="date",
            into=c("year","month","day"),
            sep="/")|>
   mutate(
+    year=case_match(
+      year,
+      "1"~"2001",
+    "2"~"2002",
+    "3"~"2003",
+    "4"~"2004",
+    "5"~"2005",
+    "6"~"2006",
+    "7"~"2007",
+    "8"~"2008",
+    "9"~"2009",
+    "10"~"2010",
+    "11"~"2011",
+    "12"~"2012"
+    ),
     month=case_match(
       month,
     "1"~"Jan",
@@ -70,9 +86,55 @@ snp_df=
     "11"~"Nov",
     "12"~"Dec")
   )|>
+  select(-day)
+```
+
+```{r}
+snp_df_2=
+  read.csv("./data/fivethirtyeight_datasets/snp.csv",skip=175)|>
+  separate(
+           col="X1.2.01",
+           into=c("month","day","year"),
+           sep="/")|>
+  mutate(
+    year=1900+as.numeric(year),
+    month=case_match(
+      month,
+    "1"~"Jan",
+    "2"~"Feb",
+    "3"~"Mar",
+    "4"~"Apr",
+    "5"~"May",
+    "6"~"June",
+    "7"~"July",
+    "8"~"Aug",
+    "9"~"Sept",
+    "10"~"Oct",
+    "11"~"Nov",
+    "12"~"Dec")
+  )|>
+  mutate(
+    year=replace(year,year==1900,2000)
+  )|>
+   mutate(
+    year=as.character(year)
+  )|>
   select(-day)|>
+  rename(close=X1366.01001)
+```
+
+```{r}
+snp_df=
+  bind_rows(snp_df_1,snp_df_2)|>
   arrange(year,month)
 ```
+
+Third, tidy the unemployment data so that it can be merged with the previous datasets. This process will involve switching from “wide” to “long” format; ensuring that key variables have the same name; and ensuring that key variables take the same values.
+
+```{r}
+
+```
+
 
 
 
