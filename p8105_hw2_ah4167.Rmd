@@ -24,7 +24,7 @@ pols_month_df=
     "01"~"Jan",
     "02"~"Feb",
     "03"~"Mar",
-    "04"~"April",
+    "04"~"Apr",
     "05"~"May",
     "06"~"June",
     "07"~"July",
@@ -41,9 +41,8 @@ pols_month_df=
     1~"gop"
     )
   )|>
-  select(-starts_with("prez_"))
-  
-  
+  select(-starts_with("prez_"))|>
+  select(-day)
 ```
 
 
