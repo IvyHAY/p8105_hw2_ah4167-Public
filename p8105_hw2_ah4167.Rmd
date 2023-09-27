@@ -150,6 +150,13 @@ final_merged_data <- left_join(Joint_df, unemployment_df, by = c("year","month")
 
 Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
 
+---
+
+# Problem 2
+
+```{r}
+
+```
 
 
 
