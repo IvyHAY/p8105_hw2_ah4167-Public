@@ -12,7 +12,7 @@ options(scipen=999)
 library(tidyverse)
 ```
 
-First, clean the data in pols-month.csv. Use separate() to break up the variable mon into integer variables year, month, and day; replace month number with month name; create a president variable taking values gop and dem, and remove prez_dem and prez_gop; and remove the day variable.
+### First, clean the data in pols-month.csv. Use separate() to break up the variable mon into integer variables year, month, and day; replace month number with month name; create a president variable taking values gop and dem, and remove prez_dem and prez_gop; and remove the day variable.
 
 ```{r}
 pols_month_df=
@@ -49,7 +49,7 @@ pols_month_df=
   select(-day)
 ```
 
-Second, clean the data in snp.csv using a similar process to the above. For consistency across datasets, arrange according to year and month, and organize so that year and month are the leading columns.
+### Second, clean the data in snp.csv using a similar process to the above. For consistency across datasets, arrange according to year and month, and organize so that year and month are the leading columns.
 
 ```{r}
 snp_df_1=
@@ -130,7 +130,7 @@ snp_df=
   arrange(year,month)
 ```
 
-Third, tidy the unemployment data so that it can be merged with the previous datasets. This process will involve switching from “wide” to “long” format; ensuring that key variables have the same name; and ensuring that key variables take the same values.
+### Third, tidy the unemployment data so that it can be merged with the previous datasets. This process will involve switching from “wide” to “long” format; ensuring that key variables have the same name; and ensuring that key variables take the same values.
 
 ```{r}
 unemployment_df=
@@ -143,7 +143,7 @@ unemployment_df=
   janitor::clean_names()
 ```
 
-Join the datasets by merging snp into pols, and merging unemployment into the result.
+### Join the datasets by merging snp into pols, and merging unemployment into the result.
 
 ```{r}
 Joint_df=
@@ -151,19 +151,19 @@ Joint_df=
 final_merged_data <- left_join(Joint_df, unemployment_df, by = c("year","month"))
 ```
 
-Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
+### Write a short paragraph about these datasets. Explain briefly what each dataset contained, and describe the resulting dataset (e.g. give the dimension, range of years, and names of key variables).
 
 ---
 
 # Problem 2
 
-Read and clean the Mr. Trash Wheel sheet:
+### Read and clean the Mr. Trash Wheel sheet:
 
 * specify the sheet in the Excel file and to omit non-data entries (rows with notes / figures; columns containing notes) using arguments in read_excel
 * use reasonable variable names 
 * omit rows that do not include dumpster-specific data
 
-The data include a column for the (approximate) number of homes powered. This calculation is described in the Homes powered note, but not applied to every row in the dataset. Update the data to include a new homes_powered variable based on this calculation. 
+### The data include a column for the (approximate) number of homes powered. This calculation is described in the Homes powered note, but not applied to every row in the dataset. Update the data to include a new homes_powered variable based on this calculation. 
 
 ```{r}
 Mr_Trash_Wheel_df=
@@ -174,7 +174,7 @@ Mr_Trash_Wheel_df=
   mutate(year,year=as.numeric(year))
 ```
 
-* Use a similar process to import, clean, and organize the data for Professor Trash Wheel and Gwynnda, and combine these with the Mr. Trash Wheel dataset to produce a single tidy dataset. To keep track of which Trash Wheel is which, you may need to add an additional variable to all datasets before combining.
+### Use a similar process to import, clean, and organize the data for Professor Trash Wheel and Gwynnda, and combine these with the Mr. Trash Wheel dataset to produce a single tidy dataset. To keep track of which Trash Wheel is which, you may need to add an additional variable to all datasets before combining.
 
 ```{r}
 Professor_Trash_Wheel_df=
@@ -198,7 +198,7 @@ Trash_Wheel_df=
   relocate(wheel_type)
 ```
 
-Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables. For available data, what was the total weight of trash collected by Professor Trash Wheel? What was the total number of cigarette butts collected by Gwynnda in July of 2021?
+### Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables. For available data, what was the total weight of trash collected by Professor Trash Wheel? What was the total number of cigarette butts collected by Gwynnda in July of 2021?
 
 The number of observations in the resulting dataset is `r nrow(Trash_Wheel_df)`. There are `r ncol(Trash_Wheel_df)` variables.
 We can tell from the resulting dataset that from `r min(Trash_Wheel_df$year)` to `r max(Trash_Wheel_df$year)` , the number of homes powered by trash recorded by this survey is about `r round(sum(Trash_Wheel_df$homes_powered))`.
@@ -208,7 +208,7 @@ All of those suggest that this project is meaningful and it really did a lot in 
 
 # Problem 3
 
-Import, clean, and tidy the dataset of baseline demographics. Ensure that sex and APOE4 carrier status are appropriate encoded (i.e. not numeric), and remove any participants who do not meet the stated inclusion criteria (i.e. no MCI at baseline). 
+### Import, clean, and tidy the dataset of baseline demographics. Ensure that sex and APOE4 carrier status are appropriate encoded (i.e. not numeric), and remove any participants who do not meet the stated inclusion criteria (i.e. no MCI at baseline). 
 
 ```{r}
 baseline_df=read.csv("./data/data_mci/MCI_baseline.csv",skip=1)|>
@@ -231,30 +231,63 @@ baseline_df=read.csv("./data/data_mci/MCI_baseline.csv",skip=1)|>
   )
 ```
 
-Discuss important steps in the import process and relevant features of the dataset. How many participants were recruited, and of these how many develop MCI? What is the average baseline age? What proportion of women in the study are APOE4 carriers?
-
-# Discuss important steps in the import process needed to be added.
+### Discuss important steps in the import process and relevant features of the dataset. How many participants were recruited, and of these how many develop MCI? What is the average baseline age? What proportion of women in the study are APOE4 carriers?
 
 There are `r nrow(read.csv("./data/data_mci/MCI_baseline.csv",skip=1))` participants recruited, `r nrow(baseline_df)` of these develop MCI. The average baseline age is about `r round(mean(baseline_df$current_age))`.
 The proprtion of women in the study are APOE4 carriers is `r nrow(baseline_df|>subset(sex=="Female"&apoe4=="APOE4 carrier"))/nrow(baseline_df|>subset(sex=="Female"))`.
 
-Similarly, import, clean, and tidy the dataset of longitudinally observed biomarker values; comment on the steps on the import process and the features of the dataset.
+### Similarly, import, clean, and tidy the dataset of longitudinally observed biomarker values; comment on the steps on the import process and the features of the dataset.
 
 ```{r}
 mci_amyloid_df=read.csv("./data/data_mci/mci_amyloid.csv",skip=1)|>
   janitor::clean_names()|>
   subset(
-   baseline!="NA"
+   baseline!="NA"& baseline!="Na"
   )|>
-  pivot_longer(
-    baseline:time_8,
-    names_to="time",
-    values_to="amyloid_ratio"
+  rename(
+  id=study_id
   )
 ```
 
-I firstly import the data and omit non-data entries. Then I remove any participants who have no MCI at baseline. Finally I transfer the wide format data to long format data. 
-There are There are `r nrow(read.csv("./data/data_mci/mci_amyloid.csv",skip=1))` participants recruited, `r nrow(read.csv("./data/data_mci/mci_amyloid.csv",skip=1)|>janitor::clean_names()|>subset( baseline!="NA"))` of them have the biomarker at the baseline. The proportion of those participants who complete the whole process is  `r nrow(read.csv("./data/data_mci/mci_amyloid.csv",skip=1)|>janitor::clean_names()|>subset(baseline!="NA"&time_2 !="NA"&time_4!="NA"&time_6!="NA"&time_8!="NA"))/nrow(read.csv("./data/data_mci/mci_amyloid.csv",skip=1)|>janitor::clean_names()|>subset( baseline!="NA"))`.
+I firstly import the data and omit non-data entries. Then I remove any participants who have no MCI at baseline. Finally, to better combine two datasets, I change the row name "study_id" to "id", which is the same as the row name of baseline_df.
+There are `r nrow(read.csv("./data/data_mci/mci_amyloid.csv",skip=1))` participants recruited, `r nrow(mci_amyloid_df)` of them have the biomarker at the baseline. The proportion of those participants who complete the whole process is  `r nrow(mci_amyloid_df|>subset(time_2 !="NA"&time_4!="NA"&time_6!="NA"&time_8!="NA"))/nrow(mci_amyloid_df)`.
+
+### Check whether some participants appear in only the baseline or amyloid datasets, and comment on your findings. Combine the demographic and biomarker datasets so that only participants who appear in both datasets are retained, and briefly describe the resulting dataset; export the result as a CSV to your data directory.
+
+```{r}
+left_join_df=
+  left_join(baseline_df,mci_amyloid_df,by="id")
+only_in_baseline_df=
+  left_join_df|>
+  subset(
+    is.na(left_join_df$baseline))
+only_in_baseline_df
+```
+
+There are three participants appear in only the baseline, there ids are 14, 49, and 268.
+
+```{r}
+right_join_df=
+  right_join(baseline_df,mci_amyloid_df,by="id")
+only_in_amyloid_df=
+  right_join_df|>
+  subset(
+    is.na(right_join_df$age_at_onset))
+only_in_amyloid_df
+```
+
+There are `r nrow(only_in_amyloid_df)` participants appear in only the amyloid datasets, which means some basic demographic information were missed out at the study baseline.
+
+```{r}
+combine_df=
+  inner_join(baseline_df,mci_amyloid_df,by="id")
+full_data_df=
+  na.omit(combine_df)
+write.csv(combine_df, "combined_data.csv", row.names = FALSE)
+write.csv(full_data_df, "full_data.csv", row.names = FALSE)
+```
+
+There `r nrow(combine_df)` participants appear in both datasets, and there are only `r nrow(full_data_df)` participants completing the whole follow-up survey.
 
 
 
