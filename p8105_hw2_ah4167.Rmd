@@ -261,7 +261,6 @@ only_in_baseline_df=
   left_join_df|>
   subset(
     is.na(left_join_df$baseline))
-only_in_baseline_df
 ```
 
 There are three participants appear in only the baseline, there ids are 14, 49, and 268.
@@ -273,7 +272,6 @@ only_in_amyloid_df=
   right_join_df|>
   subset(
     is.na(right_join_df$age_at_onset))
-only_in_amyloid_df
 ```
 
 There are `r nrow(only_in_amyloid_df)` participants appear in only the amyloid datasets, which means some basic demographic information were missed out at the study baseline.
