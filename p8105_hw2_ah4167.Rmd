@@ -166,8 +166,35 @@ The data include a column for the (approximate) number of homes powered. This ca
 Mr_Trash_Wheel_df=
   readxl::read_excel("./data/202207 Trash Wheel Collection Data.xlsx",sheet="Mr. Trash Wheel",range="A2:N549")|>
   janitor::clean_names()|>
-  mutate(homes_powered=weight_tons*500/30)
+  mutate(homes_powered=weight_tons*500/30)|>
+  mutate(wheel="Mr_Trash_Wheel")|>
+  mutate(year,year=as.numeric(year))
 ```
+
+Use a similar process to import, clean, and organize the data for Professor Trash Wheel and Gwynnda, and combine these with the Mr. Trash Wheel dataset to produce a single tidy dataset. To keep track of which Trash Wheel is which, you may need to add an additional variable to all datasets before combining.
+
+```{r}
+Professor_Trash_Wheel_df=
+  readxl::read_excel("./data/202207 Trash Wheel Collection Data.xlsx",sheet="Professor Trash Wheel",range="A2:M96")|>
+  janitor::clean_names()|>
+  mutate(homes_powered=weight_tons*500/30)|>
+  mutate(wheel="Professor_Trash_Wheel")
+
+Captain_Trash_Wheel_df=
+  readxl::read_excel("./data/202207 Trash Wheel Collection Data.xlsx",sheet="Captain Trash Wheel",range="A2:K27")|>
+  janitor::clean_names()|>
+  mutate(homes_powered=weight_tons*500/30)|>
+  mutate(wheel="Captain_Trash_Wheel")
+```
+
+```{r}
+Trash_Wheel_df=
+  bind_rows(Mr_Trash_Wheel_df,
+            Professor_Trash_Wheel_df,
+            Captain_Trash_Wheel_df)|>
+  relocate(wheel)
+```
+
 
 
 
