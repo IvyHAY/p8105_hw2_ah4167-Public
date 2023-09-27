@@ -233,8 +233,29 @@ baseline_df=read.csv("./data/data_mci/MCI_baseline.csv",skip=1)|>
 
 Discuss important steps in the import process and relevant features of the dataset. How many participants were recruited, and of these how many develop MCI? What is the average baseline age? What proportion of women in the study are APOE4 carriers?
 
+# Discuss important steps in the import process needed to be added.
+
 There are `r nrow(read.csv("./data/data_mci/MCI_baseline.csv",skip=1))` participants recruited, `r nrow(baseline_df)` of these develop MCI. The average baseline age is about `r round(mean(baseline_df$current_age))`.
 The proprtion of women in the study are APOE4 carriers is `r nrow(baseline_df|>subset(sex=="Female"&apoe4=="APOE4 carrier"))/nrow(baseline_df|>subset(sex=="Female"))`.
+
+Similarly, import, clean, and tidy the dataset of longitudinally observed biomarker values; comment on the steps on the import process and the features of the dataset.
+
+```{r}
+mci_amyloid_df=read.csv("./data/data_mci/mci_amyloid.csv",skip=1)|>
+  janitor::clean_names()|>
+  subset(
+   baseline!="NA"
+  )|>
+  pivot_longer(
+    baseline:time_8,
+    names_to="time",
+    values_to="amyloid_ratio"
+  )
+```
+
+I firstly import the data and omit non-data entries. Then I remove any participants who have no MCI at baseline. Finally I transfer the wide format data to long format data. 
+There are There are `r nrow(read.csv("./data/data_mci/mci_amyloid.csv",skip=1))` participants recruited, `r nrow(read.csv("./data/data_mci/mci_amyloid.csv",skip=1)|>janitor::clean_names()|>subset( baseline!="NA"))` of them have the biomarker at the baseline. The proportion of those participants who complete the whole process is  `r nrow(read.csv("./data/data_mci/mci_amyloid.csv",skip=1)|>janitor::clean_names()|>subset(baseline!="NA"&time_2 !="NA"&time_4!="NA"&time_6!="NA"&time_8!="NA"))/nrow(read.csv("./data/data_mci/mci_amyloid.csv",skip=1)|>janitor::clean_names()|>subset( baseline!="NA"))`.
+
 
 
 
