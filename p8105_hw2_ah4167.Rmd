@@ -3,12 +3,15 @@ title: "p8105_hw2_ah4167"
 author: "Aiying Huang"
 date: "2023-09-26"
 output: github_document
+
 ---
 # problem 1
 
 ```{r}
+options(scipen=999)
 library(tidyverse)
 ```
+
 First, clean the data in pols-month.csv. Use separate() to break up the variable mon into integer variables year, month, and day; replace month number with month name; create a president variable taking values gop and dem, and remove prez_dem and prez_gop; and remove the day variable.
 
 ```{r}
@@ -156,9 +159,9 @@ Write a short paragraph about these datasets. Explain briefly what each dataset 
 
 Read and clean the Mr. Trash Wheel sheet:
 
-specify the sheet in the Excel file and to omit non-data entries (rows with notes / figures; columns containing notes) using arguments in read_excel
-use reasonable variable names 
-omit rows that do not include dumpster-specific data
+* specify the sheet in the Excel file and to omit non-data entries (rows with notes / figures; columns containing notes) using arguments in read_excel
+* use reasonable variable names 
+* omit rows that do not include dumpster-specific data
 
 The data include a column for the (approximate) number of homes powered. This calculation is described in the Homes powered note, but not applied to every row in the dataset. Update the data to include a new homes_powered variable based on this calculation. 
 
@@ -167,33 +170,43 @@ Mr_Trash_Wheel_df=
   readxl::read_excel("./data/202207 Trash Wheel Collection Data.xlsx",sheet="Mr. Trash Wheel",range="A2:N549")|>
   janitor::clean_names()|>
   mutate(homes_powered=weight_tons*500/30)|>
-  mutate(wheel="Mr_Trash_Wheel")|>
+  mutate(wheel_type="Mr")|>
   mutate(year,year=as.numeric(year))
 ```
 
-Use a similar process to import, clean, and organize the data for Professor Trash Wheel and Gwynnda, and combine these with the Mr. Trash Wheel dataset to produce a single tidy dataset. To keep track of which Trash Wheel is which, you may need to add an additional variable to all datasets before combining.
+* Use a similar process to import, clean, and organize the data for Professor Trash Wheel and Gwynnda, and combine these with the Mr. Trash Wheel dataset to produce a single tidy dataset. To keep track of which Trash Wheel is which, you may need to add an additional variable to all datasets before combining.
 
 ```{r}
 Professor_Trash_Wheel_df=
   readxl::read_excel("./data/202207 Trash Wheel Collection Data.xlsx",sheet="Professor Trash Wheel",range="A2:M96")|>
   janitor::clean_names()|>
   mutate(homes_powered=weight_tons*500/30)|>
-  mutate(wheel="Professor_Trash_Wheel")
+  mutate(wheel_type="Professor")
 
-Captain_Trash_Wheel_df=
-  readxl::read_excel("./data/202207 Trash Wheel Collection Data.xlsx",sheet="Captain Trash Wheel",range="A2:K27")|>
+Gwynnda_Trash_Wheel_df=
+  readxl::read_excel("./data/202207 Trash Wheel Collection Data.xlsx",sheet="Gwynnda Trash Wheel",range="A2:K108")|>
   janitor::clean_names()|>
   mutate(homes_powered=weight_tons*500/30)|>
-  mutate(wheel="Captain_Trash_Wheel")
+  mutate(wheel_type="Gwynnda")
 ```
 
 ```{r}
 Trash_Wheel_df=
   bind_rows(Mr_Trash_Wheel_df,
             Professor_Trash_Wheel_df,
-            Captain_Trash_Wheel_df)|>
-  relocate(wheel)
+            Gwynnda_Trash_Wheel_df)|>
+  relocate(wheel_type)
 ```
+
+Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables. For available data, what was the total weight of trash collected by Professor Trash Wheel? What was the total number of cigarette butts collected by Gwynnda in July of 2021?
+
+The number of observations in the resulting dataset is `r nrow(Trash_Wheel_df)`. There are `r ncol(Trash_Wheel_df)` variables.
+We can tell from the resulting dataset that from `r min(Trash_Wheel_df$year)` to `r max(Trash_Wheel_df$year)` , the number of homes powered by trash recorded by this survey is about `r round(sum(Trash_Wheel_df$homes_powered))`.
+The total weight of trash collected by Professor Trash Wheel is `r sum(Professor_Trash_Wheel_df$weight_tons)`. 
+The the total number of cigarette butts collected by Gwynnda in July of 2021 is `r Gwynnda_Trash_Wheel_df|>filter(month == "July", year == 2021)|>summarize(total_butts = sum(cigarette_butts))|>pull(total_butts)`.
+All of those suggest that this project is meaningful and it really did a lot in trash collecting and making it useful to the public.
+
+# Problem 3
 
 
 
