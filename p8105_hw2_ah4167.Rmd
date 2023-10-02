@@ -41,7 +41,8 @@ pols_month_df=
     president=case_match(
       prez_gop,
     0~"dem",
-    1~"gop"
+    1~"gop",
+    2~"gop"
     )
   )|>
   mutate(year,year=as.numeric(year))|>
@@ -233,7 +234,7 @@ baseline_df=read.csv("./data/data_mci/MCI_baseline.csv",skip=1)|>
 
 ### Discuss important steps in the import process and relevant features of the dataset. How many participants were recruited, and of these how many develop MCI? What is the average baseline age? What proportion of women in the study are APOE4 carriers?
 
-There are `r nrow(read.csv("./data/data_mci/MCI_baseline.csv",skip=1))` participants recruited, `r nrow(baseline_df)` of these develop MCI. The average baseline age is about `r round(mean(baseline_df$current_age))`.
+In the import process, I used skip to avoid the non-numeric line. And used "janitor::clean_names()" to make the colnames clearer to read. And I recode the sex variable from number to "male" and "female", change the apoe4 variable from 0 and 1 to "non-carrier" and  "APOE4 carrier", which is easier to understand. There are `r nrow(read.csv("./data/data_mci/MCI_baseline.csv",skip=1))` participants recruited, `r nrow(baseline_df)` of these develop MCI. The average baseline age is about `r round(mean(baseline_df$current_age))`.
 The proprtion of women in the study are APOE4 carriers is `r nrow(baseline_df|>subset(sex=="Female"&apoe4=="APOE4 carrier"))/nrow(baseline_df|>subset(sex=="Female"))`.
 
 ### Similarly, import, clean, and tidy the dataset of longitudinally observed biomarker values; comment on the steps on the import process and the features of the dataset.
