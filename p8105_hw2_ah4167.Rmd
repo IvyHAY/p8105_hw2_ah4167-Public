@@ -168,7 +168,7 @@ final_merged_data <- left_join(Joint_df, unemployment_df, by = c("year","month")
 
 ```{r}
 Mr_Trash_Wheel_df=
-  readxl::read_excel("./data/202207 Trash Wheel Collection Data.xlsx",sheet="Mr. Trash Wheel",range="A2:N549")|>
+  readxl::read_excel("./data/202309 Trash Wheel Collection Data.xlsx",sheet="Mr. Trash Wheel",range="A2:N586")|>
   janitor::clean_names()|>
   mutate(homes_powered=weight_tons*500/30)|>
   mutate(wheel_type="Mr")|>
@@ -179,13 +179,13 @@ Mr_Trash_Wheel_df=
 
 ```{r}
 Professor_Trash_Wheel_df=
-  readxl::read_excel("./data/202207 Trash Wheel Collection Data.xlsx",sheet="Professor Trash Wheel",range="A2:M96")|>
+  readxl::read_excel("./data/202309 Trash Wheel Collection Data.xlsx",sheet="Professor Trash Wheel",range="A2:M108")|>
   janitor::clean_names()|>
   mutate(homes_powered=weight_tons*500/30)|>
   mutate(wheel_type="Professor")
 
 Gwynnda_Trash_Wheel_df=
-  readxl::read_excel("./data/202207 Trash Wheel Collection Data.xlsx",sheet="Gwynnda Trash Wheel",range="A2:K108")|>
+  readxl::read_excel("./data/202309 Trash Wheel Collection Data.xlsx",sheet="Gwynnda Trash Wheel",range="A2:L157")|>
   janitor::clean_names()|>
   mutate(homes_powered=weight_tons*500/30)|>
   mutate(wheel_type="Gwynnda")
@@ -202,8 +202,8 @@ Trash_Wheel_df=
 ### Write a paragraph about these data; you are encouraged to use inline R. Be sure to note the number of observations in the resulting dataset, and give examples of key variables. For available data, what was the total weight of trash collected by Professor Trash Wheel? What was the total number of cigarette butts collected by Gwynnda in July of 2021?
 
 The number of observations in the resulting dataset is `r nrow(Trash_Wheel_df)`. There are `r ncol(Trash_Wheel_df)` variables.
-We can tell from the resulting dataset that from `r min(Trash_Wheel_df$year)` to `r max(Trash_Wheel_df$year)` , the number of homes powered by trash recorded by this survey is about `r round(sum(Trash_Wheel_df$homes_powered))`.
-The total weight of trash collected by Professor Trash Wheel is `r sum(Professor_Trash_Wheel_df$weight_tons)`. 
+We can tell from the resulting dataset that from `r Trash_Wheel_df |> pull(year) |> min()` to `r Trash_Wheel_df |> pull(year) |> max()` , the number of homes powered by trash recorded by this survey is about `r Trash_Wheel_df |> pull(homes_powered) |> sum() |>round(2)`.
+The total weight of trash collected by Professor Trash Wheel is `r Professor_Trash_Wheel_df|> pull(weight_tons) |> sum()`. 
 The the total number of cigarette butts collected by Gwynnda in July of 2021 is `r Gwynnda_Trash_Wheel_df|>filter(month == "July", year == 2021)|>summarize(total_butts = sum(cigarette_butts))|>pull(total_butts)`.
 All of those suggest that this project is meaningful and it really did a lot in trash collecting and making it useful to the public.
 
@@ -282,8 +282,16 @@ combine_df=
   inner_join(baseline_df,mci_amyloid_df,by="id")
 full_data_df=
   na.omit(combine_df)
+long_format_df=
+  combine_df|>
+  pivot_longer(
+    baseline:time_8,
+    names_to="time",
+    values_to="mci_amyloid"
+  )
 write.csv(combine_df, "combined_data.csv", row.names = FALSE)
 write.csv(full_data_df, "full_data.csv", row.names = FALSE)
+write.csv(long_format_df, "long_format_of_combined_data.csv", row.names = FALSE)
 ```
 
 There `r nrow(combine_df)` participants appear in both datasets, and there are only `r nrow(full_data_df)` participants completing the whole follow-up survey.
