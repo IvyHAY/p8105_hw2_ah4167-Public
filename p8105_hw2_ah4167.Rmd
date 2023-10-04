@@ -228,13 +228,14 @@ baseline_df=read.csv("./data/data_mci/MCI_baseline.csv",skip=1)|>
     )
   )|>
   subset(
-    age_at_onset!="."
+    age_at_onset>=current_age|age_at_onset=="."
   )
 ```
 
 ### Discuss important steps in the import process and relevant features of the dataset. How many participants were recruited, and of these how many develop MCI? What is the average baseline age? What proportion of women in the study are APOE4 carriers?
 
-In the import process, I used skip to avoid the non-numeric line. And used "janitor::clean_names()" to make the colnames clearer to read. And I recode the sex variable from number to "male" and "female", change the apoe4 variable from 0 and 1 to "non-carrier" and  "APOE4 carrier", which is easier to understand. There are `r nrow(read.csv("./data/data_mci/MCI_baseline.csv",skip=1))` participants recruited, `r nrow(baseline_df)` of these develop MCI. The average baseline age is about `r round(mean(baseline_df$current_age))`.
+In the import process, I used skip to avoid the non-numeric line. And used "janitor::clean_names()" to make the colnames clearer to read. And I recode the sex variable from number to "male" and "female", change the apoe4 variable from 0 and 1 to "non-carrier" and  "APOE4 carrier", which is easier to understand. Finally, since the age at onset is impossible to be less the the baseline age , I used subset to avoid whose data do not align with the fact.
+There are `r nrow(read.csv("./data/data_mci/MCI_baseline.csv",skip=1))` participants recruited, `r nrow(baseline_df)` of these develop MCI. The average baseline age is about `r round(mean(baseline_df$current_age))`. 
 The proprtion of women in the study are APOE4 carriers is `r nrow(baseline_df|>subset(sex=="Female"&apoe4=="APOE4 carrier"))/nrow(baseline_df|>subset(sex=="Female"))`.
 
 ### Similarly, import, clean, and tidy the dataset of longitudinally observed biomarker values; comment on the steps on the import process and the features of the dataset.
